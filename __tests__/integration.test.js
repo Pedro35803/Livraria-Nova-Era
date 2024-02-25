@@ -9,7 +9,9 @@ const baseURL = `http://localhost:${port}/api/v1`;
 
 const api = axios.create({ baseURL });
 
-api.interceptors.response.use(null, (error) => Promise.reject(error));
+const generateIdRandom = () => {
+  return Math.floor(Math.random() * 1000000);
+};
 
 describe.each(router)(
   "Tests for router: $router",
@@ -92,5 +94,41 @@ describe.each(router)(
       expect(response.data).toBe("");
     });
 
+    it("Try update record not exists", async () => {
+      const id = generateIdRandom()
+      try {
+        await api.patch(`${router}/${id}`, data);
+        throw new Error("Error common");
+      } catch (error) {
+        expect(error).toBeInstanceOf(axios.AxiosError);
+        expect(error.response.status).toBe(404);
+      }
+    });
+
+    it("Try get record not exists", async () => {
+      const id = generateIdRandom()
+      try {
+        await api.get(`${router}/${id}`);
+        throw new Error("Error common");
+      } catch (error) {
+        expect(error).toBeInstanceOf(axios.AxiosError);
+        expect(error.response.status).toBe(404);
+      }
+    });
+
+    it("Try delete record after deleting", async () => {
+      const record = await api.post(router, data);
+      expect(record.status).toBe(201);
+      const response = await api.delete(`${router}/${record.data[indentify]}`);
+      expect(response.status).toBe(204);
+      expect(response.data).toBe("");
+      try {
+        await api.delete(`${router}/${record.data[indentify]}`);
+        throw new Error("Error common");
+      } catch (error) {
+        expect(error).toBeInstanceOf(axios.AxiosError);
+        expect(error.response.status).toBe(404);
+      }
+    });
   }
 );

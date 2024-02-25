@@ -17,10 +17,21 @@ export function handleError(
     res.status(error.status);
   }
 
-  if (error.name === "PrismaClientValidationError") {
+  if (error.name.includes("PrismaClient")) {
     const splitMessage = error.message.split("\n");
     const message = splitMessage.at(-1);
-    res.send(message);
+
+    if (error.code === "P2025" || error.code === "P2016") {
+      res.status(404).send(`No ${error.meta.modelName} found`);
+    } else if (error.code === "P2002") {
+      res.status(409);
+    }
+
+    res.send(error.meta?.cause || message);
+  }
+
+  if (error.name === "NotFoundError") {
+    res.status(404);
   }
 
   if (typeof error.message === "string") {
