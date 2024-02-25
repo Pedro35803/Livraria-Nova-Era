@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+    Codigo Int@id @default(autoincrement())
+    Nome String
+    Email_01 String
+    Email_02 String?
+    Telefone_01 String
+    Telefone_02 String?
+    @@map(name: "cliente")
+}
+
+model Clientefisico {
+    CodigoCliente Int @id @default(autoincrement())
+    RG String
+    CPF String
+    @@map(name: "clientefisico")
+}
+model Clientejuridico {
+    CodigoCliente Int @id @default(autoincrement())
+    CNPJ String
+    @@map(name: "clientejuridico")
+}
+
+model Pedido {
+    Numero Int @id @default(autoincrement())
+    Status String
+    Forma_de_Pagamento String
+    CodigoCliente Int?
+    @@map(name: "pedido")
+}
+
+model Pedidoonline {
+    NumeroPedido Int @id @default(autoincrement())
+    CEP String
+    Estado String
+    Cidade String
+    Rua String
+    Numero String
+    Compremento String?
+    @@map(name: "pedidoonline")
+}
+
+model Funcionario {
+    Codigo Int @id @default(autoincrement())
+    Nome String
+    @@map(name: "funcionario")
+}
+
+model Pedidopresencial {
+    NumeroPedido Int @id @default(autoincrement())
+    CodigoFuncionario Int?
+    @@map(name: "pedidopresencial")
+}
+
+model Editora {
+    CNPJ String @id
+    Nome String
+    @@map(name: "editora")
+}
+
+model Telefoneeditora {
+    CNPJEditora String @id
+    Telefone String?
+    @@map(name: "telefoneeditora")
+}
+
+model Emaileditora {
+    CNPJEditora String @id
+    Email String?
+    @@map(name: "emaileditora")
+}
+
+model Livro {
+    Codigo Int @id @default(autoincrement())
+    Titulo String
+    Ano_de_Lancamento String
+    CNPJEditora String?
+    @@map(name: "livro")
+}
+
+model Livroautor {
+    CodigoLivro Int @id @default(autoincrement())
+    Autor String
+    @@map(name: "livroautor")
+}
+
+model Livrocategoria {
+    CodigoLivro Int @id @default(autoincrement())
+    Categoria String?
+    @@map(name: "livrocategoria")
+}
+
+model Exemplar {
+    Codigo Int @id @default(autoincrement())
+    Status String
+    CodigoLivro Int?
+    @@map(name: "exemplar")
+}
+
+model Pedidotemexemplar {
+    Id Int @id @default(autoincrement())
+    NumeroPedido Int?
+    CodigoExemplar Int?
+    @@map(name: "pedidotemexemplar")
+}
