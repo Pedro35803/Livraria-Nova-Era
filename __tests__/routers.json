@@ -1,6 +1,13 @@
 [
   {
-    "router": "/ROUTER_HERE",
-    "data": {}
+    "router": "/client",
+    "data": {
+      "name": "John Doe",
+      "email_01": "john.doe@example.com",
+      "email_02": "alternate.email@example.com",
+      "phone_01": "+1 (555) 123-4567",
+      "phone_02": "+1 (555) 987-6543"
+    },
+    "indentify": "code"
   }
 ]

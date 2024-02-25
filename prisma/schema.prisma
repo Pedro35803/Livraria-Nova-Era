@@ -7,107 +7,130 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Cliente {
-    Codigo Int@id @default(autoincrement())
-    Nome String
-    Email_01 String
-    Email_02 String?
-    Telefone_01 String
-    Telefone_02 String?
-    @@map(name: "cliente")
+model User {
+    id Int @id @default(autoincrement())
+    email String @unique
+    password String
+    @@map("user")
 }
 
-model Clientefisico {
-    CodigoCliente Int @id @default(autoincrement())
-    RG String
-    CPF String
-    @@map(name: "clientefisico")
-}
-model Clientejuridico {
-    CodigoCliente Int @id @default(autoincrement())
-    CNPJ String
-    @@map(name: "clientejuridico")
-}
-
-model Pedido {
-    Numero Int @id @default(autoincrement())
-    Status String
-    Forma_de_Pagamento String
-    CodigoCliente Int?
-    @@map(name: "pedido")
+model Client {
+    code Int @id @default(autoincrement())
+    name String
+    email_01 String
+    email_02 String?
+    phone_01 String
+    phone_02 String?
+    @@map(name: "client")
+    @@index([code])
 }
 
-model Pedidoonline {
-    NumeroPedido Int @id @default(autoincrement())
-    CEP String
-    Estado String
-    Cidade String
-    Rua String
-    Numero String
-    Compremento String?
-    @@map(name: "pedidoonline")
+model physical_client {
+    client_code Int @id @default(autoincrement())
+    cpf String
+    rg String
+    @@map(name: "physical_client")
+    @@index([client_code])
 }
 
-model Funcionario {
-    Codigo Int @id @default(autoincrement())
-    Nome String
-    @@map(name: "funcionario")
+model legal_client {
+    client_code Int @id @default(autoincrement())
+    cnpj String
+    @@map(name: "legal_client")
+    @@index([client_code])
 }
 
-model Pedidopresencial {
-    NumeroPedido Int @id @default(autoincrement())
-    CodigoFuncionario Int?
-    @@map(name: "pedidopresencial")
+model order {
+    number Int @id @default(autoincrement())
+    status String
+    payment_method String
+    customer_code Int?
+    @@map(name: "order")
+    @@index([number])
 }
 
-model Editora {
-    CNPJ String @id
-    Nome String
-    @@map(name: "editora")
+model online_order {
+    order_number Int @id @default(autoincrement())
+    zip_code String
+    state String
+    city String
+    street String
+    number String
+    complement String?
+    @@map(name: "online_order")
+    @@index([order_number])
 }
 
-model Telefoneeditora {
-    CNPJEditora String @id
-    Telefone String?
-    @@map(name: "telefoneeditora")
+model employee {
+    code Int @id @default(autoincrement())
+    name String
+    @@map(name: "employee")
+    @@index([code])
 }
 
-model Emaileditora {
-    CNPJEditora String @id
-    Email String?
-    @@map(name: "emaileditora")
+model in_person_order {
+    order_number Int @id @default(autoincrement())
+    employee_code Int?
+    @@map(name: "in_person_order")
+    @@index([order_number])
 }
 
-model Livro {
-    Codigo Int @id @default(autoincrement())
-    Titulo String
-    Ano_de_Lancamento String
-    CNPJEditora String?
-    @@map(name: "livro")
+model publisher {
+    cnpj String @id
+    name String
+    @@map(name: "publisher")
+    @@index([cnpj])
 }
 
-model Livroautor {
-    CodigoLivro Int @id @default(autoincrement())
-    Autor String
-    @@map(name: "livroautor")
+model publisher_phone {
+    publisher_cnpj String @id
+    phone String?
+    @@map(name: "publisher_phone")
+    @@index([publisher_cnpj])
 }
 
-model Livrocategoria {
-    CodigoLivro Int @id @default(autoincrement())
-    Categoria String?
-    @@map(name: "livrocategoria")
+model publisher_email {
+    publisher_cnpj String @id
+    email String?
+    @@map(name: "publisher_email")
+    @@index([publisher_cnpj])
 }
 
-model Exemplar {
-    Codigo Int @id @default(autoincrement())
-    Status String
-    CodigoLivro Int?
-    @@map(name: "exemplar")
+model book {
+    code Int @id @default(autoincrement())
+    title String
+    release_year String
+    publisher_cnpj String?
+    @@map(name: "book")
+    @@index([code])
 }
 
-model Pedidotemexemplar {
-    Id Int @id @default(autoincrement())
-    NumeroPedido Int?
-    CodigoExemplar Int?
-    @@map(name: "pedidotemexemplar")
+model book_author {
+    book_code Int @id @default(autoincrement())
+    author String
+    @@map(name: "book_author")
+    @@index([book_code])
+}
+
+model book_category {
+    book_code Int @id @default(autoincrement())
+    category String?
+    @@map(name: "book_category")
+    @@index([book_code])
+}
+
+model copy {
+    code Int @id @default(autoincrement())
+    status String
+    book_code Int?
+    @@map(name: "copy")
+    @@index([code])
+}
+
+model order_has_copy {
+    id Int @id @default(autoincrement())
+    order_number Int?
+    copy_code Int?
+    @@map(name: "order_has_copy")
+    @@index([id])
 }
