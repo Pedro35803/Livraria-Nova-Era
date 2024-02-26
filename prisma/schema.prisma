@@ -21,36 +21,132 @@ model Client {
     email_02 String?
     phone_01 String
     phone_02 String?
+    phisical_client PhysicalClient[] 
+    legal_client LegalClient[] 
+    order Order[]
     @@map(name: "client")
     @@index([code])
 }
 
-model physical_client {
+model PhysicalClient {
     client_code Int @id @default(autoincrement())
-    cpf String
-    rg String
+    client Client @relation(fields: [client_code], references: [code], onDelete: Cascade)
+    cpf String @unique
+    rg String @unique
     @@map(name: "physical_client")
     @@index([client_code])
 }
 
-model legal_client {
+model LegalClient {
     client_code Int @id @default(autoincrement())
-    cnpj String
+    client Client @relation(fields: [client_code], references: [code], onDelete: Cascade)
+    cnpj String @unique
     @@map(name: "legal_client")
     @@index([client_code])
 }
 
-model order {
+model Employee {
+    code Int @id @default(autoincrement())
+    name String
+    in_person_order InPersonOrder[]
+    @@map(name: "employee")
+    @@index([code])
+}
+
+model InPersonOrder {
+    order_number Int @id @default(autoincrement())
+    order Order @relation(fields: [order_number], references: [number], onDelete: Cascade)
+    employee_code Int
+    employee Employee @relation(fields: [employee_code], references: [code], onDelete: Cascade)
+    @@map(name: "in_person_order")
+    @@index([order_number])
+}
+
+model Publisher {
+    cnpj String @id
+    name String
+    book Book[]
+    publisher_phone PublisherPhone[]
+    publisher_email PublisherEmail[]
+    @@map(name: "publisher")
+    @@index([cnpj])
+}
+
+model PublisherPhone {
+    publisher_cnpj String
+    phone String
+    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: Cascade)
+    @@id([publisher_cnpj, phone])
+    @@map(name: "publisher_phone")
+    @@index([publisher_cnpj])
+}
+
+model PublisherEmail {
+    publisher_cnpj String
+    email String
+    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: Cascade)
+    @@id([publisher_cnpj, email])
+    @@map(name: "publisher_email")
+    @@index([publisher_cnpj])
+}
+
+model Book {
+    code Int @id @default(autoincrement())
+    title String
+    release_year String
+    publisher_cnpj String
+    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: SetNull, onUpdate: Cascade)
+    book_author BookAuthor[]
+    book_category BookCategory[]
+    copy Copy[]
+    @@map(name: "book")
+    @@index([code])
+}
+
+model BookAuthor {
+    book_code Int
+    author String
+    book Book @relation(fields: [book_code], references: [code], onDelete: Cascade)
+    @@id([book_code, author])
+    @@map(name: "book_author")
+    @@index([book_code])
+}
+
+model BookCategory {
+    book_code Int
+    category String
+    book Book @relation(fields: [book_code], references: [code], onDelete: Cascade)
+    @@id([book_code, category])
+    @@map(name: "book_category")
+    @@index([book_code])
+}
+
+model Copy {
+    code Int @id @default(autoincrement())
+    status String
+    book_code Int
+    book Book @relation(fields: [book_code], references: [code], onDelete: SetNull)
+    order_has_copy OrderHasCopy[]
+    @@map(name: "copy")
+    @@index([code])
+}
+
+model Order {
     number Int @id @default(autoincrement())
     status String
     payment_method String
-    customer_code Int?
+    client_code Int
+    client Client @relation(fields: [client_code], references: [code], onDelete: SetNull)
+    online_order OnlineOrder[]
+    in_person_order InPersonOrder[]
+    order_has_copy OrderHasCopy[]
     @@map(name: "order")
     @@index([number])
 }
 
-model online_order {
+model OnlineOrder {
     order_number Int @id @default(autoincrement())
+    order Order @relation(fields: [order_number], references: [number])
     zip_code String
     state String
     city String
@@ -61,76 +157,13 @@ model online_order {
     @@index([order_number])
 }
 
-model employee {
-    code Int @id @default(autoincrement())
-    name String
-    @@map(name: "employee")
-    @@index([code])
-}
-
-model in_person_order {
-    order_number Int @id @default(autoincrement())
-    employee_code Int?
-    @@map(name: "in_person_order")
-    @@index([order_number])
-}
-
-model publisher {
-    cnpj String @id
-    name String
-    @@map(name: "publisher")
-    @@index([cnpj])
-}
-
-model publisher_phone {
-    publisher_cnpj String @id
-    phone String?
-    @@map(name: "publisher_phone")
-    @@index([publisher_cnpj])
-}
-
-model publisher_email {
-    publisher_cnpj String @id
-    email String?
-    @@map(name: "publisher_email")
-    @@index([publisher_cnpj])
-}
-
-model book {
-    code Int @id @default(autoincrement())
-    title String
-    release_year String
-    publisher_cnpj String?
-    @@map(name: "book")
-    @@index([code])
-}
-
-model book_author {
-    book_code Int @id @default(autoincrement())
-    author String
-    @@map(name: "book_author")
-    @@index([book_code])
-}
-
-model book_category {
-    book_code Int @id @default(autoincrement())
-    category String?
-    @@map(name: "book_category")
-    @@index([book_code])
-}
-
-model copy {
-    code Int @id @default(autoincrement())
-    status String
-    book_code Int?
-    @@map(name: "copy")
-    @@index([code])
-}
-
-model order_has_copy {
+model OrderHasCopy {
     id Int @id @default(autoincrement())
-    order_number Int?
-    copy_code Int?
+    order_number Int
+    copy_code Int
+    order Order @relation(fields: [order_number], references: [number])
+    copy Copy @relation(fields: [copy_code], references: [code])
+    @@unique([copy_code, order_number])
     @@map(name: "order_has_copy")
     @@index([id])
 }
