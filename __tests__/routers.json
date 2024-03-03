@@ -1,13 +1,22 @@
 [
   {
-    "router": "/client",
+    "router": "client",
     "data": {
+      "code": "{{ID}}",
       "name": "John Doe",
       "email_01": "john.doe@example.com",
       "email_02": "alternate.email@example.com",
       "phone_01": "+1 (555) 123-4567",
       "phone_02": "+1 (555) 987-6543"
     },
-    "indentify": "code"
+    "update": { "name": "Jhonantas Dias", "email_01": "jhon.dias@example.com" }
+  },
+  {
+    "router": "legal_client",
+    "data": {
+      "client_code": "{{ID}}",
+      "cnpj": "{{DD.101.872/0001-33}}"
+    },
+    "update": { "cnpj": "05.015.284/0001-03" }
   }
 ]
