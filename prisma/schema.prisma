@@ -8,162 +8,170 @@ datasource db {
 }
 
 model User {
-    id Int @id @default(autoincrement())
-    email String @unique
-    password String
-    @@map("user")
+  email       String      @id(map: "pk_user") @db.VarChar(255)
+  password    String      @db.VarChar(255)
+  name        String?     @db.VarChar(255)
 }
 
 model Client {
-    code Int @id @default(autoincrement())
-    name String
-    email_01 String
-    email_02 String?
-    phone_01 String
-    phone_02 String?
-    phisical_client PhysicalClient[] 
-    legal_client LegalClient[] 
-    order Order[]
-    @@map(name: "client")
-    @@index([code])
+  code            Int              @id(map: "pk_client")
+  name            String           @db.VarChar(255)
+  email_01        String           @db.VarChar(255)
+  email_02        String?          @db.VarChar(255)
+  phone_01        String           @db.Char(11)
+  phone_02        String?          @db.Char(11)
+  PhysicalClient  PhysicalClient?
+  LegalClient     LegalClient?
+  Order           Order[]
+
+  @@index([code], map: "index_client")
 }
 
 model PhysicalClient {
-    client_code Int @id @default(autoincrement())
-    client Client @relation(fields: [client_code], references: [code], onDelete: Cascade)
-    cpf String @unique
-    rg String @unique
-    @@map(name: "physical_client")
-    @@index([client_code])
+  client_code     Int     @id(map: "pk_physicalClient")
+  rg              String  @unique @db.VarChar(50)
+  cpf             String  @unique @db.Char(11)
+  client          Client @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_physicalClient")
+
+  @@index([client_code], map: "index_physicalClient")
+
 }
 
 model LegalClient {
-    client_code Int @id @default(autoincrement())
-    client Client @relation(fields: [client_code], references: [code], onDelete: Cascade)
-    cnpj String @unique
-    @@map(name: "legal_client")
-    @@index([client_code])
-}
+  client_code     Int     @id(map: "pk_legalClient")
+  cnpj            String  @unique @db.Char(14)
+  client          Client @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_legalClient")
 
-model Employee {
-    code Int @id @default(autoincrement())
-    name String
-    in_person_order InPersonOrder[]
-    @@map(name: "employee")
-    @@index([code])
-}
-
-model InPersonOrder {
-    order_number Int @id @default(autoincrement())
-    order Order @relation(fields: [order_number], references: [number], onDelete: Cascade)
-    employee_code Int
-    employee Employee @relation(fields: [employee_code], references: [code], onDelete: Cascade)
-    @@map(name: "in_person_order")
-    @@index([order_number])
+  @@index([client_code], map: "index_legalClient")
 }
 
 model Publisher {
-    cnpj String @id
-    name String
-    book Book[]
-    publisher_phone PublisherPhone[]
-    publisher_email PublisherEmail[]
-    @@map(name: "publisher")
-    @@index([cnpj])
-}
+  cnpj            String            @id(map: "pk_publisher") @db.Char(14)
+  name            String            @db.VarChar(255)
+  PublisherEmail  PublisherEmail[]
+  Book            Book[]
+  PublisherPhone  PublisherPhone[]
 
-model PublisherPhone {
-    publisher_cnpj String
-    phone String
-    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: Cascade)
-    @@id([publisher_cnpj, phone])
-    @@map(name: "publisher_phone")
-    @@index([publisher_cnpj])
+  @@index([cnpj], map: "index_publisher")
 }
 
 model PublisherEmail {
-    publisher_cnpj String
-    email String
-    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: Cascade)
-    @@id([publisher_cnpj, email])
-    @@map(name: "publisher_email")
-    @@index([publisher_cnpj])
+  cnpj_publisher  String  @db.Char(14)
+  email           String  @db.VarChar(255)
+  publisher       Publisher @relation(fields: [cnpj_publisher], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fk_publisherEmail")
+
+  @@id([email, cnpj_publisher], map: "pk_publisherEmail")
+  @@index([cnpj_publisher], map: "index_publisherEmail")
 }
 
+model PublisherPhone {
+  cnpj_publisher  String  @db.Char(14)
+  phone           String  @db.Char(11)
+  publisher       Publisher @relation(fields: [cnpj_publisher], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fk_publisherPhone")
+
+  @@id([phone, cnpj_publisher], map: "pk_publisherPhone")
+  @@index([cnpj_publisher], map: "index_publisherPhone")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Employee {
+  code              Int                @id(map: "pk_employee")
+  name              String             @db.VarChar(255)
+  salary            Float
+  hiring_year       DateTime           @db.Date
+  PhysicalOrder     PhysicalOrder[]
+
+  @@index([code], map: "index_employee")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Book {
-    code Int @id @default(autoincrement())
-    title String
-    release_year String
-    publisher_cnpj String
-    publisher Publisher @relation(fields: [publisher_cnpj], references: [cnpj], onDelete: SetNull, onUpdate: Cascade)
-    book_author BookAuthor[]
-    book_category BookCategory[]
-    copy Copy[]
-    @@map(name: "book")
-    @@index([code])
+  code                Int              @id(map: "pk_book")
+  title               String           @db.VarChar(255)
+  price               Float
+  release_year        String           @db.Char(4)
+  cnpj_publisher      String?          @db.Char(14)
+  Copy                Copy[]
+  Publisher           Publisher?       @relation(fields: [cnpj_publisher], references: [cnpj], onDelete: NoAction, onUpdate: NoAction, map: "fk_book")
+  BookAuthor          BookAuthor[]
+  BookCategory        BookCategory[]
+
+  @@index([code], map: "index_book")
 }
 
 model BookAuthor {
-    book_code Int
-    author String
-    book Book @relation(fields: [book_code], references: [code], onDelete: Cascade)
-    @@id([book_code, author])
-    @@map(name: "book_author")
-    @@index([book_code])
+  code_book  Int
+  author     String @db.VarChar(255)
+  book       Book   @relation(fields: [code_book], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_bookAuthor")
+
+  @@id([author, code_book], map: "pk_bookAuthor")
+  @@index([code_book], map: "index_bookAuthor")
 }
 
 model BookCategory {
-    book_code Int
-    category String
-    book Book @relation(fields: [book_code], references: [code], onDelete: Cascade)
-    @@id([book_code, category])
-    @@map(name: "book_category")
-    @@index([book_code])
+  code_book  Int
+  category   String @db.VarChar(50)
+  book       Book   @relation(fields: [code_book], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_bookCategory")
+
+  @@id([category, code_book], map: "pk_bookCategory")
+  @@index([code_book], map: "index_bookCategory")
 }
 
 model Copy {
-    code Int @id @default(autoincrement())
-    status String
-    book_code Int
-    book Book @relation(fields: [book_code], references: [code], onDelete: SetNull)
-    order_has_copy OrderHasCopy[]
-    @@map(name: "copy")
-    @@index([code])
+  code            Int                 @id(map: "pk_copy")
+  status          String              @db.VarChar(50)
+  code_book       Int?
+  book            Book?               @relation(fields: [code_book], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_copy")
+  OrderHasCopy    OrderHasCopy[]
+
+  @@index([code], map: "index_copy")
 }
 
 model Order {
-    number Int @id @default(autoincrement())
-    status String
-    payment_method String
-    client_code Int
-    client Client @relation(fields: [client_code], references: [code], onDelete: SetNull)
-    online_order OnlineOrder[]
-    in_person_order InPersonOrder[]
-    order_has_copy OrderHasCopy[]
-    @@map(name: "order")
-    @@index([number])
+  number              Int                 @id(map: "pk_order")
+  status              String              @db.VarChar(50)
+  value               Float
+  date                DateTime            @db.Timestamp(6)
+  payment_method      String              @db.VarChar(50)
+  client_code         Int?
+  client              Client?            @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_order")
+  OrderOnline         OrderOnline?
+  PhysicalOrder       PhysicalOrder?
+  OrderHasCopy        OrderHasCopy[]
+
+  @@index([number], map: "index_order")
 }
 
-model OnlineOrder {
-    order_number Int @id @default(autoincrement())
-    order Order @relation(fields: [order_number], references: [number])
-    zip_code String
-    state String
-    city String
-    street String
-    number String
-    complement String?
-    @@map(name: "online_order")
-    @@index([order_number])
+model OrderOnline {
+  order_number   Int     @id(map: "pk_orderOnline")
+  zip            String  @db.VarChar(50)
+  state          String  @db.VarChar(255)
+  city           String  @db.VarChar(255)
+  street         String  @db.VarChar(255)
+  number         String  @db.VarChar(15)
+  length         String? @db.VarChar(255)
+  order          Order  @relation(fields: [order_number], references: [number], onDelete: NoAction, onUpdate: NoAction, map: "fk_orderOnline")
+
+  @@index([order_number], map: "index_orderOnline")
 }
 
+model PhysicalOrder {
+  order_number         Int          @id(map: "pk_physicalOrder")
+  code_employee        Int?
+  order                Order        @relation(fields: [order_number], references: [number], onDelete: NoAction, onUpdate: NoAction, map: "fk_01_physicalOrder")
+  Employee             Employee?    @relation(fields: [code_employee], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_02_physicalOrder")
+
+  @@index([order_number], map: "index_physicalOrder")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model OrderHasCopy {
-    id Int @id @default(autoincrement())
-    order_number Int
-    copy_code Int
-    order Order @relation(fields: [order_number], references: [number])
-    copy Copy @relation(fields: [copy_code], references: [code])
-    @@unique([copy_code, order_number])
-    @@map(name: "order_has_copy")
-    @@index([id])
+  id                Int       @id(map: "pk_orderHasCopy")
+  price             Float
+  order_number      Int?
+  code_copy         Int?
+  order             Order?   @relation(fields: [order_number], references: [number], onDelete: NoAction, onUpdate: NoAction, map: "fk_01_orderHasCopy")
+  Copy              Copy?    @relation(fields: [code_copy], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_02_orderHasCopy")
+
+  @@index([id], map: "index_orderHasCopy")
 }
