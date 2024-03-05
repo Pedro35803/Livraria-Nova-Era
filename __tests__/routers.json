@@ -6,8 +6,8 @@
       "name": "John Doe",
       "email_01": "john.doe@example.com",
       "email_02": "alternate.email@example.com",
-      "phone_01": "+1 (555) 123-4567",
-      "phone_02": "+1 (555) 987-6543"
+      "phone_01": "15551234567",
+      "phone_02": "15559876543"
     },
     "update": { "name": "Jhonantas Dias", "email_01": "jhon.dias@example.com" }
   },
@@ -15,8 +15,37 @@
     "router": "legal_client",
     "data": {
       "client_code": "{{ID}}",
-      "cnpj": "{{DD.101.872/0001-33}}"
+      "cnpj": "{{DD101872000133}}"
     },
-    "update": { "cnpj": "05.015.284/0001-03" }
-  }
+    "update": { "cnpj": "{{05DDD284000103}}" }
+  },
+  {
+    "router": "physical_client",
+    "data": {
+      "client_code": "{{ID}}",
+      "cpf": "{{DDD74281066}}",
+      "rg": "{{DD3764626}}"
+    },
+    "update": { "cpf": "{{240DDD07060}}", "rg": "{{15DDD7107}}" }
+  },
+  {
+    "router": "employee",
+    "data": {
+      "code": "{{ID}}",
+      "name": "Ramon Vieira"
+    },
+    "update": { "name": "Ramon Castro Vieira" }
+  },
+  {
+    "router": "order",
+    "data": {
+       "number": "{{ID}}",
+       "status": "Pendente",
+       "payment_method": "Cartão de Crédito",
+       "client_code": "{{ID}}"
+    },
+    "update": {
+       "status": "Concluído"
+    }
+   }
 ]

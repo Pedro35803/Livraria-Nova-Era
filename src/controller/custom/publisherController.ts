@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { publisher } from "@prisma/client";
+import { Publisher } from "@prisma/client";
 import { db } from "../../db";
 import { clearStringForNumber } from "../../services/formatData";
 
@@ -25,9 +25,10 @@ export const update = async (req: Request, res: Response) => {
   const data = req.body;
   const cnpj = clearStringForNumber(req.params.id);
 
-  const update: Partial<Publisher> = {};
-  if (data.cnpj) update.cnpj = clearStringForNumber(data.cnpj);
-  if (data.name) update.name = data.name;
+  const update: Publisher = {
+    ...data,
+    cnpj: data.cnpj ? clearStringForNumber(data.cnpj) : undefined,
+  };
 
   const response = await db.publisher.update({ data: update, where: { cnpj } });
   res.status(203).json(response);

@@ -1,43 +1,43 @@
 import { Request, Response } from "express";
 import { db } from "../../db";
-import { PublisherPhone } from "@prisma/client";
+import { PublisherEmail } from "@prisma/client";
 import { clearStringForNumber, verifyField } from "../../services/formatData";
 
 export const getAll = async (req: Request, res: Response) => {
-  const search = req.query as PublisherPhone;
-  const response = await db.publisherPhone.findMany({ where: search });
+  const search = req.query as PublisherEmail;
+  const response = await db.publisherEmail.findMany({ where: search });
   res.json(response);
 };
 
 export const create = async (req: Request, res: Response) => {
-  const data: PublisherPhone = req.body;
+  const data: PublisherEmail = req.body;
   const cnpj_publisher = clearStringForNumber(data.cnpj_publisher);
-  const phone = clearStringForNumber(data.phone);
-  const response = await db.publisherPhone.create({
-    data: { cnpj_publisher, phone },
+  const email = clearStringForNumber(data.email);
+  const response = await db.publisherEmail.create({
+    data: { cnpj_publisher, email },
   });
   res.status(201).json(response);
 };
 
 export const update = async (req: Request, res: Response) => {
-  const search = req.query as PublisherPhone;
-  const data: PublisherPhone = req.body;
+  const search = req.query as PublisherEmail;
+  const data: PublisherEmail = req.body;
 
-  verifyField(search, ["cnpj_publisher", "phone"]);
+  verifyField(search, ["cnpj_publisher", "email"])
 
-  const update: PublisherPhone = {
+  const update: PublisherEmail = {
     ...data,
     cnpj_publisher: data.cnpj_publisher
       ? clearStringForNumber(data.cnpj_publisher)
       : undefined,
   };
 
-  await db.publisherPhone.updateMany({
+  await db.publisherEmail.updateMany({
     data: update,
     where: search,
   });
 
-  const response = await db.publisherPhone.findFirst({
+  const response = await db.publisherEmail.findFirst({
     where: { ...search, ...update },
   });
 
@@ -45,13 +45,13 @@ export const update = async (req: Request, res: Response) => {
 };
 
 export const destroy = async (req: Request, res: Response) => {
-  const search = req.query as PublisherPhone;
+  const search = req.query as PublisherEmail;
   const where = { ...search };
-
-  verifyField(search, ["cnpj_publisher", "phone"]);
-
-  await db.publisherPhone.findFirst({ where });
-  const response = await db.publisherPhone.deleteMany({ where });
+  
+  verifyField(search, ["cnpj_publisher", "email"])
+  
+  await db.publisherEmail.findFirst({ where });
+  const response = await db.publisherEmail.deleteMany({ where });
   
   res.status(204).json(response);
 };

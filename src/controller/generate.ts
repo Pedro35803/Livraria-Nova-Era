@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 
-// Altas possibilidades de chave primaria impactar aqui também
-
 export const generateController = (dbTable, filterFunc) => {
   const getById = async (req: Request, res: Response) => {
     const id = Number(req.params.id);

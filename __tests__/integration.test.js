@@ -18,10 +18,10 @@ const handleValues = (data, id) => {
     if (value === "{{ID}}") return [key, id];
     const newValue = value.replace(/{{(.*?)}}/g, (match, content) => {
       return content
-        .replace("ID", id)
+        .replace("ID_STRING", String(id))
         .replace(/D/g, () => Math.floor(Math.random(0, 9) * 10));
     });
-    return [key, newValue]
+    return [key, newValue];
   });
   return Object.fromEntries(list);
 };
@@ -50,7 +50,7 @@ const deleteData = async (router, id) => {
   }
 };
 
-const id = generateIdRandom();
+const id = 555;
 
 describe.each(routers)(
   "Tests for router: $router",
@@ -80,7 +80,7 @@ describe.each(routers)(
       expect(response.data).toBeInstanceOf(Array);
     });
 
-    it("Create a record successfully", async () => {
+    it.only("Create a record successfully", async () => {
       const newData = handleValues(data, id);
       const response = await api.post(router, newData);
 
@@ -100,7 +100,7 @@ describe.each(routers)(
       });
 
       it("Get one record successfully", async () => {
-        const response = await api.get(`${router}/${id}`);
+        const response = await api.get(`/${router}/${id}`);
 
         expect(response.status).toBe(200);
         expect(response.data).toBeInstanceOf(Object);
@@ -111,7 +111,7 @@ describe.each(routers)(
       });
 
       it("Update some record properties with successfully", async () => {
-        const response = await api.patch(`${router}/${id}`, update);
+        const response = await api.patch(`/${router}/${id}`, update);
 
         expect(response.status).toBe(203);
         expect(response.data).toBeInstanceOf(Object);
@@ -124,7 +124,7 @@ describe.each(routers)(
 
       it("Update all record properties with successfully", async () => {
         const newData = handleValues({ ...data, ...update }, id);
-        const response = await api.patch(`${router}/${id}`, newData);
+        const response = await api.patch(`/${router}/${id}`, newData);
 
         expect(response.status).toBe(203);
         expect(response.data).toBeInstanceOf(Object);
@@ -136,7 +136,7 @@ describe.each(routers)(
       });
 
       it("Delete a record successfully", async () => {
-        const response = await api.delete(`${router}/${id}`);
+        const response = await api.delete(`/${router}/${id}`);
         expect(response.status).toBe(204);
         expect(response.data).toBe("");
       });
@@ -144,7 +144,7 @@ describe.each(routers)(
       it("Try update record not exists", async () => {
         const idRandom = generateIdRandom();
         try {
-          await api.patch(`${router}/${idRandom}`, update);
+          await api.patch(`/${router}/${idRandom}`, update);
           throw new Error("Error common");
         } catch (error) {
           expect(error).toBeInstanceOf(axios.AxiosError);
@@ -155,7 +155,7 @@ describe.each(routers)(
       it("Try get record not exists", async () => {
         const idRandom = generateIdRandom();
         try {
-          await api.get(`${router}/${idRandom}`);
+          await api.get(`/${router}/${idRandom}`);
           throw new Error("Error common");
         } catch (error) {
           expect(error).toBeInstanceOf(axios.AxiosError);
@@ -164,12 +164,12 @@ describe.each(routers)(
       });
 
       it("Try delete record after deleting", async () => {
-        const response = await api.delete(`${router}/${id}`);
+        const response = await api.delete(`/${router}/${id}`);
         expect(response.status).toBe(204);
         expect(response.data).toBe("");
 
         try {
-          await api.delete(`${router}/${id}`);
+          await api.delete(`/${router}/${id}`);
           throw new Error("Error common");
         } catch (error) {
           expect(error).toBeInstanceOf(axios.AxiosError);

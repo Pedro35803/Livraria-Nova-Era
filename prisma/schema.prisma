@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  email       String      @id(map: "pk_user") @db.VarChar(255)
+  id          Int         @id(map: "pk_user") @default(autoincrement())
+  email       String      @unique @db.VarChar(255)
   password    String      @db.VarChar(255)
   name        String?     @db.VarChar(255)
 }
 
 model Client {
-  code            Int              @id(map: "pk_client")
+  code            Int              @id(map: "pk_client") @default(autoincrement())
   name            String           @db.VarChar(255)
   email_01        String           @db.VarChar(255)
   email_02        String?          @db.VarChar(255)
@@ -28,7 +29,7 @@ model Client {
 }
 
 model PhysicalClient {
-  client_code     Int     @id(map: "pk_physicalClient")
+  client_code     Int     @id(map: "pk_physicalClient") @default(autoincrement())
   rg              String  @unique @db.VarChar(50)
   cpf             String  @unique @db.Char(11)
   client          Client @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_physicalClient")
@@ -38,9 +39,9 @@ model PhysicalClient {
 }
 
 model LegalClient {
-  client_code     Int     @id(map: "pk_legalClient")
+  client_code     Int     @id(map: "pk_legalClient") @default(autoincrement())
   cnpj            String  @unique @db.Char(14)
-  client          Client @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_legalClient")
+  client          Client  @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_legalClient")
 
   @@index([client_code], map: "index_legalClient")
 }
@@ -75,7 +76,7 @@ model PublisherPhone {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Employee {
-  code              Int                @id(map: "pk_employee")
+  code              Int                @id(map: "pk_employee") @default(autoincrement())
   name              String             @db.VarChar(255)
   salary            Float
   hiring_year       DateTime           @db.Date
@@ -86,7 +87,7 @@ model Employee {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Book {
-  code                Int              @id(map: "pk_book")
+  code                Int              @id(map: "pk_book") @default(autoincrement())
   title               String           @db.VarChar(255)
   price               Float
   release_year        String           @db.Char(4)
@@ -118,7 +119,7 @@ model BookCategory {
 }
 
 model Copy {
-  code            Int                 @id(map: "pk_copy")
+  code            Int                 @id(map: "pk_copy") @default(autoincrement())
   status          String              @db.VarChar(50)
   code_book       Int?
   book            Book?               @relation(fields: [code_book], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_copy")
@@ -128,7 +129,7 @@ model Copy {
 }
 
 model Order {
-  number              Int                 @id(map: "pk_order")
+  number              Int                 @id(map: "pk_order") @default(autoincrement())
   status              String              @db.VarChar(50)
   value               Float
   date                DateTime            @db.Timestamp(6)
@@ -166,7 +167,7 @@ model PhysicalOrder {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model OrderHasCopy {
-  id                Int       @id(map: "pk_orderHasCopy")
+  id                Int       @id(map: "pk_orderHasCopy") @default(autoincrement())
   price             Float
   order_number      Int?
   code_copy         Int?
