@@ -2,8 +2,8 @@ import { generateController } from "./generate";
 import { db } from "../db";
 
 import * as publisherController from "./custom/publisherController";
-import * as publisherPhoneController from "./custom/publisherPhoneController";
-import * as publisherEmailController from "./custom/publisherEmailController";
+import { generateForDoubleIDController } from "./generateForDoubleID";
+import { clearStringForNumber } from "../services/formatData";
 
 export const client = generateController(db.client, (id) => ({ code: id }));
 export const legalClient = generateController(db.legalClient, (id) => ({
@@ -27,8 +27,25 @@ export const orderHasCopy = generateController(db.orderHasCopy, (id) => ({
 }));
 
 export const publisher = publisherController;
-export const publisherPhone = publisherPhoneController;
-export const publisherEmail = publisherEmailController;
+
+const modelDataPublisherAll = (data) => ({
+  ...data,
+  cnpj_publisher: data.cnpj_publisher
+    ? clearStringForNumber(data.cnpj_publisher)
+    : undefined,
+});
+
+export const publisherPhone = generateForDoubleIDController(
+  db.publisherPhone,
+  ["cnpj_publisher", "phone"],
+  modelDataPublisherAll
+);
+
+export const publisherEmail = generateForDoubleIDController(
+  db.publisherEmail,
+  ["cnpj_publisher", "email"],
+  modelDataPublisherAll
+);
 
 export const book = generateController(db.book, (id) => ({ code: id }));
 export const bookAuthor = generateController(db.bookAuthor, (id) => ({
