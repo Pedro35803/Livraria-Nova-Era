@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verifyDoubleID, verifyField } from "../services/formatData";
+import { verifyDoubleID, verifyField } from "../../services/formatData";
 
 export const generateForDoubleIDController = <PrismaTable>(
   dbTable,

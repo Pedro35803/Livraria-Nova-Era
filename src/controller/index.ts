@@ -1,8 +1,8 @@
-import { generateController } from "./generate";
+import { generateController } from "./generate/generate";
 import { db } from "../db";
 
 import * as publisherController from "./custom/publisherController";
-import { generateForDoubleIDController } from "./generateForDoubleID";
+import { generateForDoubleIDController } from "./generate/generateForDoubleID";
 import { clearStringForNumber } from "../services/formatData";
 
 export const client = generateController(db.client, (id) => ({ code: id }));
