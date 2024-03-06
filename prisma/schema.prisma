@@ -29,7 +29,7 @@ model Client {
 }
 
 model PhysicalClient {
-  client_code     Int     @id(map: "pk_physicalClient") @default(autoincrement())
+  client_code     Int     @id(map: "pk_physicalClient")
   rg              String  @unique @db.VarChar(50)
   cpf             String  @unique @db.Char(11)
   client          Client @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_physicalClient")
@@ -39,7 +39,7 @@ model PhysicalClient {
 }
 
 model LegalClient {
-  client_code     Int     @id(map: "pk_legalClient") @default(autoincrement())
+  client_code     Int     @id(map: "pk_legalClient")
   cnpj            String  @unique @db.Char(14)
   client          Client  @relation(fields: [client_code], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "fk_legalClient")
 

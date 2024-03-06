@@ -5,7 +5,12 @@ import { clearStringForNumber, verifyField } from "../../services/formatData";
 
 export const getAll = async (req: Request, res: Response) => {
   const search = req.query as PublisherPhone;
-  const response = await db.publisherPhone.findMany({ where: search });
+  const dbTable = db.publisherPhone;
+  const objFunc = { where: search };
+  const response =
+    search.cnpj_publisher && search.phone
+      ? await dbTable.findFirst(objFunc)
+      : await dbTable.findMany(objFunc);
   res.json(response);
 };
 
@@ -50,8 +55,8 @@ export const destroy = async (req: Request, res: Response) => {
 
   verifyField(search, ["cnpj_publisher", "phone"]);
 
-  await db.publisherPhone.findFirst({ where });
+  await db.publisherPhone.findFirstOrThrow({ where });
   const response = await db.publisherPhone.deleteMany({ where });
-  
+
   res.status(204).json(response);
 };

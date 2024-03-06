@@ -5,16 +5,20 @@ import { clearStringForNumber, verifyField } from "../../services/formatData";
 
 export const getAll = async (req: Request, res: Response) => {
   const search = req.query as PublisherEmail;
-  const response = await db.publisherEmail.findMany({ where: search });
+  const dbTable = db.publisherEmail;
+  const objFunc = { where: search };
+  const response =
+    search.cnpj_publisher && search.email
+      ? await dbTable.findFirst(objFunc)
+      : await dbTable.findMany(objFunc);
   res.json(response);
 };
 
 export const create = async (req: Request, res: Response) => {
   const data: PublisherEmail = req.body;
   const cnpj_publisher = clearStringForNumber(data.cnpj_publisher);
-  const email = clearStringForNumber(data.email);
   const response = await db.publisherEmail.create({
-    data: { cnpj_publisher, email },
+    data: { cnpj_publisher, email: data.email },
   });
   res.status(201).json(response);
 };
@@ -23,7 +27,7 @@ export const update = async (req: Request, res: Response) => {
   const search = req.query as PublisherEmail;
   const data: PublisherEmail = req.body;
 
-  verifyField(search, ["cnpj_publisher", "email"])
+  verifyField(search, ["cnpj_publisher", "email"]);
 
   const update: PublisherEmail = {
     ...data,
@@ -47,11 +51,11 @@ export const update = async (req: Request, res: Response) => {
 export const destroy = async (req: Request, res: Response) => {
   const search = req.query as PublisherEmail;
   const where = { ...search };
-  
-  verifyField(search, ["cnpj_publisher", "email"])
-  
-  await db.publisherEmail.findFirst({ where });
+
+  verifyField(search, ["cnpj_publisher", "email"]);
+
+  await db.publisherEmail.findFirstOrThrow({ where });
   const response = await db.publisherEmail.deleteMany({ where });
-  
+
   res.status(204).json(response);
 };
