@@ -7,10 +7,10 @@ export const generateForDoubleIDController = <PrismaTable>(
   funcModelData = (data) => data
 ) => {
   const getAll = async (req: Request, res: Response) => {
-    const search = req.query as PrismaTable;
+    const search = funcModelData(req.query) as PrismaTable;
     const objFunc = { where: search };
     const response = verifyDoubleID(search, listDoubleID)
-      ? await dbTable.findFirst(objFunc)
+      ? await dbTable.findFirstOrThrow(objFunc)
       : await dbTable.findMany(objFunc);
     res.json(response);
   };
@@ -23,12 +23,14 @@ export const generateForDoubleIDController = <PrismaTable>(
   };
 
   const update = async (req: Request, res: Response) => {
-    const search = req.query as PrismaTable;
+    const search = funcModelData(req.query) as PrismaTable;
     const data: PrismaTable = req.body;
 
     verifyField(search, listDoubleID);
 
     const update: PrismaTable = funcModelData(data);
+
+    await dbTable.findFirstOrThrow({ where: search });
 
     await dbTable.updateMany({
       data: update,
@@ -43,7 +45,7 @@ export const generateForDoubleIDController = <PrismaTable>(
   };
 
   const destroy = async (req: Request, res: Response) => {
-    const search = req.query as PrismaTable;
+    const search = funcModelData(req.query) as PrismaTable;
     const where = { ...search };
 
     verifyField(search, listDoubleID);

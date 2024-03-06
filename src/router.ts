@@ -3,6 +3,9 @@ import express from "express";
 import * as user from "./controller/user";
 
 import {
+  book,
+  bookAuthor,
+  bookCategory,
   client,
   employee,
   legalClient,
@@ -58,3 +61,7 @@ generateRouter("/order_has_copy", orderHasCopy);
 generateRouter("/publisher", publisher);
 generateRouterWhithoutID("/publisher_phone", publisherPhone);
 generateRouterWhithoutID("/publisher_email", publisherEmail);
+
+generateRouter("/book", book);
+generateRouterWhithoutID("/book_author", bookAuthor);
+generateRouterWhithoutID("/book_category", bookCategory);

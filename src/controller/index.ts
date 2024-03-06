@@ -47,12 +47,21 @@ export const publisherEmail = generateForDoubleIDController(
   modelDataPublisherAll
 );
 
+const modelDataBookAll = (data) => ({
+  ...data,
+  code_book: data.code_book ? Number(data.code_book) : undefined,
+});
+
 export const book = generateController(db.book, (id) => ({ code: id }));
-export const bookAuthor = generateController(db.bookAuthor, (id) => ({
-  book_code: id,
-}));
-export const bookCategory = generateController(db.bookCategory, (id) => ({
-  book_code: id,
-}));
+export const bookAuthor = generateForDoubleIDController(
+  db.bookAuthor,
+  ["code_book", "author"],
+  modelDataBookAll
+);
+export const bookCategory = generateForDoubleIDController(
+  db.bookCategory,
+  ["code_book", "category"],
+  modelDataBookAll
+);
 
 export const copy = generateController(db.copy, (id) => ({ code: id }));

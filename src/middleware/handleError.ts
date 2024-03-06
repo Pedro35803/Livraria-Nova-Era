@@ -17,7 +17,7 @@ export function handleError(
     res.status(error.status);
   }
 
-  if (error.name.includes("PrismaClient")) {
+  if (error.name?.includes("PrismaClient")) {
     const splitMessage = error.message.split("\n");
     const message = splitMessage.at(-1);
 

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --files ./src/index.ts",
     "db": "prisma migrate dev",
-    "test": "jest"
+    "test": "prisma migrate reset -f && jest"
   },
   "keywords": [],
   "author": "",
