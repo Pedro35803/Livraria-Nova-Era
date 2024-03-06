@@ -115,7 +115,7 @@ describe.each(routers)(
       });
 
       it("Update some record properties with successfully", async () => {
-        const newData = handleValues(update);
+        const newData = handleValues(update, id);
         const response = await api.patch(routerID, newData);
 
         expect(response.status).toBe(203);

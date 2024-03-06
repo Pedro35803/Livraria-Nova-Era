@@ -7,11 +7,14 @@ import {
   bookAuthor,
   bookCategory,
   client,
+  copy,
   employee,
   legalClient,
   order,
   orderHasCopy,
+  orderOnline,
   physicalClient,
+  physicalOrder,
   publisher,
   publisherEmail,
   publisherPhone,
@@ -54,8 +57,8 @@ generateRouter("/physical_client", physicalClient);
 generateRouter("/employee", employee);
 
 generateRouter("/order", order);
-// generateRouter("/online_order", onlineOrder)
-// generateRouter("/in_person_order", inPersonOrder)
+generateRouter("/online_order", orderOnline)
+generateRouter("/physical_order", physicalOrder)
 generateRouter("/order_has_copy", orderHasCopy);
 
 generateRouter("/publisher", publisher);
@@ -65,3 +68,5 @@ generateRouterWhithoutID("/publisher_email", publisherEmail);
 generateRouter("/book", book);
 generateRouterWhithoutID("/book_author", bookAuthor);
 generateRouterWhithoutID("/book_category", bookCategory);
+
+generateRouter("/copy", copy);

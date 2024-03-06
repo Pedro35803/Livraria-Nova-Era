@@ -100,6 +100,16 @@
     "update": { "category": "Alegoria" }
   },
   {
+    "router": "copy",
+    "routerID": "/copy/{{ID}}",
+    "data": {
+      "code": "{{ID}}",
+      "status": "Estoque",
+      "code_book": "{{ID}}"
+    },
+    "update": { "status": "Vendido" }
+  },
+  {
     "router": "order",
     "routerID": "/order/{{ID}}",
     "data": {
@@ -113,5 +123,39 @@
     "update": {
       "status": "Concluído"
     }
+  },
+  {
+    "router": "online_order",
+    "routerID": "/online_order/{{ID}}",
+    "data": {
+      "order_number": "{{ID}}",
+      "zip": "12345-678",
+      "state": "São Paulo",
+      "city": "São Paulo",
+      "street": "Rua Exemplo",
+      "number": "123",
+      "length": "Bloco A"
+    },
+    "update": { "state": "Rio de Janeiro" }
+  },
+  {
+    "router": "physical_order",
+    "routerID": "/physical_order/{{ID}}",
+    "data": {
+      "order_number": "{{ID}}",
+      "code_employee": "{{ID}}"
+    },
+    "update": { "code_employee": "{{ID}}" }
+  },
+  {
+    "router": "order_has_copy",
+    "routerID": "/order_has_copy/{{ID}}",
+    "data": {
+      "id": "{{ID}}",
+      "order_number": "{{ID}}",
+      "code_copy": "{{ID}}",
+      "price": 20.00
+    },
+    "update": { "price": 18.00 }
   }
 ]
