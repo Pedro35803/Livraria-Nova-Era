@@ -1,6 +1,7 @@
 [
   {
     "router": "client",
+    "routerID": "/client/{{ID}}",
     "data": {
       "code": "{{ID}}",
       "name": "John Doe",
@@ -13,6 +14,7 @@
   },
   {
     "router": "legal_client",
+    "routerID": "/legal_client/{{ID}}",
     "data": {
       "client_code": "{{ID}}",
       "cnpj": "{{DD101872000133}}"
@@ -21,6 +23,7 @@
   },
   {
     "router": "physical_client",
+    "routerID": "/physical_client/{{ID}}",
     "data": {
       "client_code": "{{ID}}",
       "cpf": "{{DDD74281066}}",
@@ -30,22 +33,85 @@
   },
   {
     "router": "employee",
+    "routerID": "/employee/{{ID}}",
     "data": {
       "code": "{{ID}}",
-      "name": "Ramon Vieira"
+      "name": "Ramon Vieira",
+      "salary": 2000.0,
+      "hiring_year": "2024-03-05T00:00:00.000Z"
     },
     "update": { "name": "Ramon Castro Vieira" }
   },
   {
-    "router": "order",
+    "router": "publisher",
+    "routerID": "/publisher/22125372205532",
     "data": {
-       "number": "{{ID}}",
-       "status": "Pendente",
-       "payment_method": "Cartão de Crédito",
-       "client_code": "{{ID}}"
+      "cnpj": "22125372205532",
+      "name": "Editora Rocco"
+    },
+    "update": { "name": "Ramon Castro Vieira" }
+  },
+  {
+    "router": "publisher_phone",
+    "routerID": "/publisher_phone?phone=89552255821&&cnpj_publisher=22125372205532",
+    "data": {
+      "cnpj_publisher": "22125372205532",
+      "phone": "89552255821"
+    },
+    "update": { "phone": "89552255821" }
+  },
+  {
+    "router": "publisher_email",
+    "routerID": "/publisher_email?email=arroz@gmail.com&&cnpj_publisher=22125372205532",
+    "data": {
+      "cnpj_publisher": "22125372205532",
+      "email": "arroz@gmail.com"
+    },
+    "update": { "email": "arroz@gmail.com" }
+  },
+  {
+    "router": "book",
+    "routerID": "/book/{{ID}}",
+    "data": {
+      "code": "{{ID}}",
+      "title": "A revolução dos bichos",
+      "price": 20.0,
+      "release_year": "1945",
+      "cnpj_publisher": "22125372205532"
+    },
+    "update": { "price": 18.0 }
+  },
+  {
+    "router": "book_author",
+    "routerID": "/book_author?code_book={{ID}}&&author=George Orwell",
+    "data": {
+      "code_book": "{{ID}}",
+      "author": "George Orwell"
+    },
+    "update": { "author": "George Orwell" }
+  },
+  {
+    "router": "book_category",
+    "routerID": "/book_category?code_book={{ID}}&&category=Alegoria",
+    "data": {
+      "code_book": "{{ID}}",
+      "category": "Alegoria"
+    },
+    "update": { "category": "Alegoria" }
+  },
+  {
+    "router": "order",
+    "routerID": "/order/{{ID}}",
+    "data": {
+      "number": "{{ID}}",
+      "status": "Pendente",
+      "date": "2024-03-05T00:00:00.000Z",
+      "payment_method": "Cartão de Crédito",
+      "client_code": "{{ID}}",
+      "value": 200.0
     },
     "update": {
-       "status": "Concluído"
+      "status": "Concluído"
     }
-   }
+  }
 ]
