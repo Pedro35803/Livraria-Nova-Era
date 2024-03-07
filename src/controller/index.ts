@@ -5,13 +5,40 @@ import * as publisherController from "./custom/publisherController";
 import { generateForDoubleIDController } from "./generate/generateForDoubleID";
 import { clearStringForNumber } from "../services/formatData";
 
-export const client = generateController(db.client, (id) => ({ code: id }));
-export const legalClient = generateController(db.legalClient, (id) => ({
-  client_code: id,
-}));
-export const physicalClient = generateController(db.physicalClient, (id) => ({
-  client_code: id,
-}));
+const choseValue = (data, callback) => (data ? callback(data) : undefined);
+
+export const client = generateController(
+  db.client,
+  (id) => ({ code: id }),
+  (data) => ({
+    ...data,
+    phone_01: choseValue(data.phone_01, clearStringForNumber),
+    phone_02: choseValue(data.phone_02, clearStringForNumber),
+  })
+);
+
+export const legalClient = generateController(
+  db.legalClient,
+  (id) => ({
+    client_code: id,
+  }),
+  (data) => ({
+    ...data,
+    cnpj: choseValue(data.cnpj, clearStringForNumber),
+  })
+);
+
+export const physicalClient = generateController(
+  db.physicalClient,
+  (id) => ({
+    client_code: id,
+  }),
+  (data) => ({
+    ...data,
+    cpf: choseValue(data.cpf, clearStringForNumber),
+    rg: choseValue(data.rg, clearStringForNumber),
+  })
+);
 
 export const employee = generateController(db.employee, (id) => ({ code: id }));
 
@@ -30,9 +57,7 @@ export const publisher = publisherController;
 
 const modelDataPublisherAll = (data) => ({
   ...data,
-  cnpj_publisher: data.cnpj_publisher
-    ? clearStringForNumber(data.cnpj_publisher)
-    : undefined,
+  cnpj_publisher: choseValue(data.cnpj_publisher, clearStringForNumber),
 });
 
 export const publisherPhone = generateForDoubleIDController(
@@ -49,10 +74,15 @@ export const publisherEmail = generateForDoubleIDController(
 
 const modelDataBookAll = (data) => ({
   ...data,
-  code_book: data.code_book ? Number(data.code_book) : undefined,
+  code_book: choseValue(data.code_book, Number),
 });
 
-export const book = generateController(db.book, (id) => ({ code: id }));
+export const book = generateController(
+  db.book,
+  (id) => ({ code: id }),
+  modelDataPublisherAll
+);
+
 export const bookAuthor = generateForDoubleIDController(
   db.bookAuthor,
   ["code_book", "author"],

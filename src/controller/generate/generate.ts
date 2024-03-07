@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 
-export const generateController = (dbTable, filterFunc) => {
+export const generateController = (
+  dbTable,
+  filterFunc,
+  funcModelData = (data) => data
+) => {
   const getById = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const where = filterFunc(id);
@@ -14,13 +18,13 @@ export const generateController = (dbTable, filterFunc) => {
   };
 
   const create = async (req: Request, res: Response) => {
-    const data = req.body;
+    const data = funcModelData(req.body);
     const response = await dbTable.create({ data });
     res.status(201).json(response);
   };
 
   const update = async (req: Request, res: Response) => {
-    const data = req.body;
+    const data = funcModelData(req.body);
     const id = Number(req.params.id);
     const where = filterFunc(id);
     const response = await dbTable.update({ data, where });

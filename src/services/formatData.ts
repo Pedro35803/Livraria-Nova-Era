@@ -1,5 +1,5 @@
 export const clearStringForNumber = (string) => {
-  return string.replace(/\.|\-|\/|\(|\)/g, "");
+  return string.replace(/\.|\-|\/|\+|\(|\)/g, "");
 };
 
 export const verifyField = (query, listColumns) => {
